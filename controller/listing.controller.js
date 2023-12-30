@@ -9,9 +9,7 @@ import ListingSchemaModel from '../model/listing.model.js';
 import VehicleSchemaModel from '../model/vehicle.model.js';
 
 export var save=async (req,res,next)=>{
-  
-
-  const { id } = req.params;
+  var dDetails=req.body;
  
   var img=req.files.img;
   var Img=Date.now()+"-"+img.name;
@@ -32,25 +30,29 @@ export var save=async (req,res,next)=>{
 return res.status(500).json({"error":"Server Error"});
 }
 
-export const fetch = async (req, res) => { 
+export const fetch = async (req, res) => {
   try {
-    // Extract the ID parameter from the request
-    const { id } = req.params;
-    console.error(req.params);
-    // Fetch data from the VehicleSchemaModel based on the ID
-    const vehicleData = await VehicleSchemaModel.findById(id);
+    // Check if there are parameters in the request
+    if (Object.keys(req.params).length > 0) {
+      // Extract the parameters from the request
+      const { segment } = req.params;
+      console.log(req.params);
 
-    // Check if data is found
-    if (vehicleData) {
-      return res.status(200).json(vehicleData);
+      // Conditionally fetch data based on the vehicle segment
+      const dList = await VehicleSchemaModel.find({ segment });
+
+      // Return the fetched data or an empty array
+      return res.status(200).json(dList || []);
     } else {
-      return res.status(404).json({ error: 'Resource not found' });
+    // Only fetch data if the category is "car"  
+      const dList = await VehicleSchemaModel.find({ category: 'car' });
+      // Return the fetched data or an empty array
+      return res.status(200).json(dList || []);
+    }} catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Server Error' });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Server Error' });
-  }
-};
+}
 
 
   

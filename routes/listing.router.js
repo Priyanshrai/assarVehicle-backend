@@ -5,7 +5,9 @@ var router = express.Router();
 
 router.post("/save",listingController.save);
 
-router.get("/fetch/:id", listingController.fetch);
+router.get("/fetch", listingController.fetch);
+
+router.get("/fetch/:segment", listingController.fetch);
 
 
 router.delete("/delete/:id",listingController.deleteDocument);
